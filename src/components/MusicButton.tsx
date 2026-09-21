@@ -33,7 +33,7 @@ function MusicButton() {
     <div className="music-control">
       <audio
         ref={audioRef}
-        src="/audio/bensound-pianomoment.mp3"
+        src={`${import.meta.env.BASE_URL}audio/bensound-pianomoment.mp3`}
         loop
         preload="none"
         onEnded={() => setIsPlaying(false)}

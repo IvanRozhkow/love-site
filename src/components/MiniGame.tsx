@@ -77,7 +77,7 @@ function MiniGame({ theme, onClose }: Props) {
           <h2 id="mini-game-title">Кошеня вже чекає на тебе</h2>
           <div className="kitten-frame">
             <img
-              src="/images/kitten.png"
+              src={`${import.meta.env.BASE_URL}images/kitten.png`}
               alt="Намальоване кошеня"
               onError={(event) => {
                 event.currentTarget.hidden = true
