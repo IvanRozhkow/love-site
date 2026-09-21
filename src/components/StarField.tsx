@@ -325,6 +325,9 @@ function StarField({ theme = 'sky' }: { theme?: 'sky' | 'heart' }) {
     }
 
     const draw = (time: number) => {
+      frameId = 0
+      if (document.hidden) return
+
       const dt = Math.min((time - lastTime) / 1000, 0.05)
       lastTime = time
       const t = time / 1000
@@ -528,12 +531,19 @@ function StarField({ theme = 'sky' }: { theme?: 'sky' | 'heart' }) {
       frameId = requestAnimationFrame(draw)
     }
 
+    const onVisibilityChange = () => {
+      if (!document.hidden && frameId === 0) {
+        frameId = requestAnimationFrame(draw)
+      }
+    }
+
     resize()
     frameId = requestAnimationFrame(draw)
     window.addEventListener('resize', resize)
     window.addEventListener('pointerdown', onPointerDown)
     window.addEventListener('pointerup', onPointerUp)
     window.addEventListener('deviceorientation', onOrientation)
+    document.addEventListener('visibilitychange', onVisibilityChange)
 
     return () => {
       cancelAnimationFrame(frameId)
@@ -541,6 +551,7 @@ function StarField({ theme = 'sky' }: { theme?: 'sky' | 'heart' }) {
       window.removeEventListener('pointerdown', onPointerDown)
       window.removeEventListener('pointerup', onPointerUp)
       window.removeEventListener('deviceorientation', onOrientation)
+      document.removeEventListener('visibilitychange', onVisibilityChange)
     }
   }, [theme])
 

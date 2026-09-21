@@ -460,11 +460,6 @@ body {
   object-fit: contain;
 }
 
-.kitten-fallback {
-  position: absolute;
-  font-size: 5rem;
-}
-
 .secret-card__eyebrow {
   display: block;
   margin-bottom: 0.8rem;
@@ -484,11 +479,6 @@ body {
 .secret-card p {
   margin: 0 0 1rem;
   line-height: 1.65;
-}
-
-.secret-card__signature {
-  color: #ff9bad;
-  font-size: 0.95rem;
 }
 
 .secret-card .map-button {
@@ -876,5 +866,16 @@ body {
 
   .letter-card {
     min-height: 11rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }
