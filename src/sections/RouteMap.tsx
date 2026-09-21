@@ -22,6 +22,7 @@ type RouteInfo = { km: number; seconds: number }
 function RouteMap() {
   const mapEl = useRef<HTMLDivElement>(null)
   const mapRef = useRef<L.Map | null>(null)
+  const fallbackRouteRef = useRef<L.Polyline | null>(null)
   const [unlocked, setUnlocked] = useState(false)
   const [info, setInfo] = useState<RouteInfo | null>(null)
 
@@ -65,7 +66,15 @@ function RouteMap() {
         .addTo(map)
     }
 
-    // Поки вантажиться маршрут, показуємо обидва міста
+    // Поки завантажується маршрут, одразу показуємо пряму лінію між містами.
+    fallbackRouteRef.current = L.polyline(
+      [
+        [me.lat, me.lon],
+        [her.lat, her.lon],
+      ],
+      { color: '#e8f0ff', weight: 2, opacity: 0.8, dashArray: '6 8' },
+    ).addTo(map)
+
     map.fitBounds(
       L.latLngBounds([
         [me.lat, me.lon],
@@ -88,6 +97,8 @@ function RouteMap() {
         if (cancelled) return
         const route = data.routes?.[0]
         if (!route) throw new Error('no route')
+        fallbackRouteRef.current?.remove()
+        fallbackRouteRef.current = null
 
         const latlngs = route.geometry.coordinates.map(
           ([lon, lat]: [number, number]) => [lat, lon] as L.LatLngTuple,
@@ -114,19 +125,13 @@ function RouteMap() {
         setInfo({ km: Math.round(route.distance / 1000), seconds: route.duration })
       })
       .catch(() => {
-        if (cancelled) return
-        // Запасний варіант: пунктирна пряма лінія
-        L.polyline(
-          [
-            [me.lat, me.lon],
-            [her.lat, her.lon],
-          ],
-          { color: '#e8f0ff', weight: 2, opacity: 0.8, dashArray: '6 8' },
-        ).addTo(map)
+        // Пряма лінія вже показана як запасний маршрут.
       })
 
     return () => {
       cancelled = true
+      fallbackRouteRef.current?.remove()
+      fallbackRouteRef.current = null
       map.remove()
       mapRef.current = null
     }
